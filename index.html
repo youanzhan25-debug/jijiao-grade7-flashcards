@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>冀教版七年级上册单词闪卡</title>
+<style>
+:root{
+  --bg1:#0f1b2d; --bg2:#1b2f4e;
+  --card:#fdf6ec; --card-edge:#e8dcc8;
+  --ink:#24344d; --sub:#6b7a92;
+  --acc:#ff7a3d; --acc-deep:#e85d1f;
+  --gold:#d9a441;
+  --ok:#2ecc71;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{max-width:100%;overflow-x:hidden;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  background:radial-gradient(120% 90% at 15% 0%,var(--bg2) 0%,var(--bg1) 55%,#0a1522 100%);
+  min-height:100vh;color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;
+  padding:env(safe-area-inset-top) 12px calc(env(safe-area-inset-bottom) + 12px);
+}
+.wrap{width:100%;max-width:520px;display:flex;flex-direction:column;flex:1;}
+
+/* ---------- 头部 ---------- */
+header{text-align:center;padding:14px 0 10px;}
+header h1{
+  font-size:19px;font-weight:800;letter-spacing:1px;color:#fff;
+  text-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+header h1 .dot{color:var(--acc);}
+header p{font-size:12px;color:#9fb2cc;margin-top:4px;}
+
+/* ---------- 工具条 ---------- */
+.toolbar{display:flex;gap:8px;align-items:center;margin:10px 0 8px;flex-wrap:nowrap;}
+.btn{
+  border:none;border-radius:12px;padding:9px 12px;font-size:13px;font-weight:600;
+  background:rgba(255,255,255,.08);color:#dfe9f5;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  transition:transform .12s,background .15s;
+}
+.btn:active{transform:scale(.94);}
+.btn.on{background:var(--acc);color:#fff;}
+.spacer{flex:1;}
+.icon-btn{width:38px;height:38px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;}
+
+/* 分类 chips 横向滚动 */
+.chips{
+  display:flex;gap:8px;overflow-x:auto;padding:6px 2px 8px;margin:0 -2px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  flex:0 0 auto;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);
+  color:#c8d6e8;border-radius:999px;padding:7px 13px;font-size:12.5px;cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700;}
+
+/* ---------- 卡片 ---------- */
+.stage{display:flex;justify-content:center;perspective:1400px;margin:8px 0 4px;}
+.card-scene{position:relative;width:100%;max-width:460px;height:min(52vh,430px);min-height:300px;transform-style:preserve-3d;}
+.card{
+  position:absolute;inset:0;border-radius:26px;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.1,.2,1);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:0 18px 45px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.06) inset;
+}
+.card.flip{transform:rotateY(180deg);}
+.face{
+  position:absolute;inset:0;border-radius:26px;padding:22px;
+  display:flex;flex-direction:column;
+  background:linear-gradient(165deg,#fffdf7 0%,var(--card) 55%,#f3e8d2 100%);
+  border:1px solid var(--card-edge);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.face.back{transform:rotateY(180deg);background:linear-gradient(165deg,#fffaf0 0%,#fdf0da 60%,#f7e3c4 100%);}
+
+.face .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.tag{
+  font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;
+  background:rgba(26,74,135,.09);color:#3a5a86;letter-spacing:.3px;
+}
+.tag.acc{background:rgba(255,122,61,.14);color:var(--acc-deep);}
+
+.face .main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;overflow:hidden;}
+.card-img{
+  flex:none;width:min(62%,240px);aspect-ratio:1/1;margin:2px auto 12px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:18px;background:linear-gradient(160deg,#fff 0%,#f1e7d3 100%);
+  border:1px solid rgba(217,164,65,.35);overflow:hidden;
+}
+.card-emoji{font-size:clamp(70px,18vw,110px);line-height:1;user-select:none;}
+.card-img img.hide,.card-emoji.hide{display:none;}
+.card-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transform:scale(1.3);
+  transform-origin:center;
+}
+.card-img.hide{display:none;}
+.watermark{
+  text-align:center;font-size:8.5px;line-height:1.5;letter-spacing:.5px;
+  color:rgba(90,70,35,.20);margin:2px 0 6px;user-select:none;
+}
+.watermark.hide{display:none;}
+.face .l3en,.face .l3zh{font-weight:800;word-break:break-word;line-height:1.3;}
+.face .l3en{font-size:clamp(24px,6vw,34px);color:var(--ink);}
+.face .l3zh{font-size:clamp(30px,7.5vw,44px);color:var(--ink);}
+.face .hint{font-size:12px;color:var(--sub);margin-top:12px;}
+
+.path{
+  margin-top:auto;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.65);
+  border:1px dashed rgba(217,164,65,.55);text-align:center;
+}
+.path .pl{font-size:12px;color:var(--sub);margin-bottom:4px;letter-spacing:1px;}
+.path .pv{font-size:15px;font-weight:700;color:#5a4a20;line-height:1.5;word-break:break-word;}
+.path .pv .arrow{color:var(--gold);margin:0 5px;font-weight:900;}
+
+.face:not(.back) .path{display:none;}
+.speaker{
+  position:absolute;bottom:14px;right:14px;z-index:5;
+  width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--acc);color:#fff;font-size:19px;
+  box-shadow:0 6px 16px rgba(232,93,31,.45);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .12s;
+}
+.speaker:active{transform:scale(.9);}
+.speaker.speaking{animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,122,61,.55);}50%{box-shadow:0 0 0 14px rgba(255,122,61,0);}}
+
+.corner{
+  position:absolute;top:14px;left:16px;font-size:11.5px;font-weight:700;color:var(--sub);letter-spacing:.5px;
+}
+
+/* ---------- 进度 ---------- */
+.progress{margin:14px 0 4px;}
+.progress .pbar{height:6px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;}
+.progress .pfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),var(--gold));transition:width .25s;width:0;}
+.progress .ptext{display:flex;justify-content:space-between;font-size:11.5px;color:#9fb2cc;margin-top:6px;}
+
+/* ---------- 底部操作 ---------- */
+.controls{display:flex;align-items:center;gap:10px;margin-top:10px;}
+.ctrl-btn{
+  flex:1;border:none;border-radius:16px;padding:14px 0;font-size:15px;font-weight:700;cursor:pointer;
+  background:rgba(255,255,255,.1);color:#eaf1fa;transition:transform .12s,background .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.ctrl-btn:active{transform:scale(.95);}
+.ctrl-btn.primary{background:linear-gradient(135deg,var(--acc) 0%,var(--acc-deep) 100%);box-shadow:0 8px 20px rgba(232,93,31,.35);}
+.ctrl-btn.small{flex:0 0 auto;width:52px;border-radius:16px;}
+#langBtn{font-size:12px;font-weight:800;letter-spacing:.5px;}
+
+/* ---------- 提示条 ---------- */
+.toast{
+  position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
+  background:rgba(20,32,52,.95);color:#fff;padding:10px 18px;border-radius:12px;
+  font-size:13px;opacity:0;pointer-events:none;transition:all .3s;z-index:99;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:86%;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+footer{text-align:center;font-size:11px;color:#5f7290;margin-top:14px;letter-spacing:.5px;}
+.tts-banner{
+  display:flex;align-items:flex-start;gap:8px;margin:8px 0 4px;padding:10px 12px;
+  background:linear-gradient(135deg,#fff7e6 0%,#ffefd2 100%);
+  border:1px solid rgba(217,164,65,.5);border-radius:12px;
+  font-size:12.5px;line-height:1.6;color:#6b5310;
+}
+.tts-banner.hide{display:none;}
+.tts-banner b{color:#a05a00;}
+.tts-banner .x{margin-left:auto;flex:none;background:none;border:none;font-size:14px;color:#a08a55;cursor:pointer;padding:0 2px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>冀教版七上<span class="dot">单词闪卡</span></h1>
+    <p id="statLine">冀教版七年级上册 · 8 个单元 · 268 个单词</p>
+  </header>
+
+  <div class="tts-banner hide" id="ttsBanner">
+    <div>📢 当前浏览器<span style="color:#c0392b">不支持朗读</span>。<br>请在页面右上角点 <b>「···」→「在浏览器中打开」</b>，或用 <b>Safari / Chrome</b> 打开本链接，即可获得英式发音朗读；<b>添加到主屏幕</b>后从图标进入效果最佳。<br>（微信内置浏览器会屏蔽朗读功能）</div>
+    <button class="x" id="ttsClose">✕</button>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" id="modeBtn" title="切换卡片朝向">EN → 中</button>
+    <button class="btn" id="orderBtn" title="切换顺序/随机">顺序</button>
+    <div class="spacer"></div>
+    <button class="btn icon-btn" id="autoBtn" title="自动播放">▶</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="stage">
+    <div class="card-scene" id="scene">
+      <div class="card" id="card">
+        <div class="face">
+          <span class="corner" id="cornerFront"></span>
+          <div class="tag-row" id="tagsFront"></div>
+          <div class="main">
+            <div class="card-img hide" id="frontImgWrap"><img id="frontImg" alt="" referrerpolicy="no-referrer"><div class="card-emoji hide" id="frontEmoji"></div></div>
+            <div class="l3en" id="frontText"></div><div class="hint" id="frontHint">点击卡片翻面看中文 · 点 🔊 英音朗读</div>
+          </div>
+          <div class="path"><div class="pl" id="frontPathLabel">所属路径</div><div class="pv" id="frontPath"></div></div>
+        </div>
+        <div class="face back">
+          <span class="corner">答案</span>
+          <div class="tag-row" id="tagsBack"></div>
+          <div class="main"><div class="l3zh" id="backText"></div><div class="hint">点击卡片返回 · 点 🔊 朗读</div></div>
+          <div class="path"><div class="pl">所属路径</div><div class="pv" id="backPath"></div></div>
+        </div>
+        <button class="speaker" id="speakBtn" aria-label="朗读">🔊</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark hide" id="watermark"><div>微信/电话：13513443496</div><div>做出口找小詹 · 让外贸更简单</div></div>
+
+  <div class="progress">
+    <div class="pbar"><div class="pfill" id="pfill"></div></div>
+    <div class="ptext"><span id="pcur">0 / 0</span><span id="pinfo"></span></div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn small" id="prevBtn">◀</button>
+    <button class="ctrl-btn primary" id="nextBtn">下一张 ▶</button>
+    <button class="ctrl-btn small" id="langBtn" title="中英文图片转换">中⇄EN</button>
+  </div>
+
+  <footer>数据：冀教版七年级上册单词表（含词性）· 点 🔊 逐词跟读 · 点击卡片翻面 · 右下角按钮中英文图片转换</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+window.CATALOG=[{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"same","l3zh":"adj.相同的；同一的","img":"emoji:➡️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"everyone","l3zh":"pron.每人；人人","img":"emoji:👥"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"around","l3zh":"adv.&prep.四周；大约；围绕；到处","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"building","l3zh":"n.楼房；建筑物","img":"emoji:🏢"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"borrow","l3zh":"v.借；借用","img":"emoji:🤲"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"lab","l3zh":"n.实验室(=laboratory)","img":"emoji:🧪"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"together","l3zh":"adv.一起；共同","img":"emoji:🤝"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"join","l3zh":"v.加入；参加；连接","img":"emoji:🤝"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"fun","l3zh":"n.&adj.乐趣；玩笑；有趣的","img":"emoji:🎉"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"date","l3zh":"n.日期；约会","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"p.m.","l3zh":"abbr.下午；午后","img":"emoji:🌆"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"grade","l3zh":"n.年级；等级；程度","img":"emoji:🎓"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"other","l3zh":"adj.&pron.另外；其他","img":"emoji:🔄"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"enjoy","l3zh":"v.喜爱；欣赏；享受","img":"emoji:😊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"language","l3zh":"n.语言","img":"emoji:🗣️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"culture","l3zh":"n.文化；文明","img":"emoji:🏛️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit1 New school, new beginning!","l2zh":"Unit1 New school, new beginning!","l3en":"both","l3zh":"det.&pron.……和……都；两个都","img":"emoji:👥"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"amazing","l3zh":"adj.令人惊奇的","img":"emoji:🤩"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"true","l3zh":"adj.确实的；真正的","img":"emoji:✅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"tip","l3zh":"n.提示；指点；端；小费","img":"emoji:💡"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"need","l3zh":"v.&n.需要；必需","img":"emoji:🆘"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"example","l3zh":"n.例子；典型","img":"emoji:📋"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"meaning","l3zh":"n.意义；含义","img":"emoji:💭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"mean","l3zh":"v.意思是；意味着","img":"emoji:💭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"more","l3zh":"det.&pron.&adv.更多的；更；更多","img":"emoji:➕"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"fact","l3zh":"n.事实；现实","img":"emoji:📊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"only","l3zh":"adv.&adj.只有；仅仅；唯一的；仅有的","img":"emoji:1️⃣"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"than","l3zh":"prep.&conj.比","img":"emoji:⚖️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"million","l3zh":"num.一百万","img":"emoji:🔢"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"level","l3zh":"n.水平；标准；级别","img":"emoji:📊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"therein","l3zh":"adv.在那里；在其中","img":"emoji:📍"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"even","l3zh":"adv.甚至","img":"emoji:🔁"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"phrase","l3zh":"n.短语；词组","img":"emoji:💬"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"piece","l3zh":"n.片；碎片；一件","img":"emoji:🧩"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"sentence","l3zh":"n.句子","img":"emoji:💬"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"quick","l3zh":"adj.快的；迅速的；敏捷的","img":"emoji:⚡"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"fox","l3zh":"n.狐狸","img":"emoji:🦊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"lazy","l3zh":"adj.懒惰的","img":"emoji:🦥"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"would","l3zh":"aux.愿意；将","img":"emoji:🤔"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"pot","l3zh":"n.锅","img":"https://s.alicdn.com/@sc04/kf/H65978ae7426c463fac01dee219ea29bfE.png_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"cabbage","l3zh":"n.卷心菜；洋白菜","img":"emoji:🥬"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"eggplant","l3zh":"n.茄子","img":"emoji:🍆"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"mushroom","l3zh":"n.蘑菇","img":"emoji:🍄"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"maybe","l3zh":"adv.大概；也许；可能","img":"emoji:🤔"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"tofu","l3zh":"n.豆腐","img":"emoji:🥡"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"correct","l3zh":"adj.正确的；合适的","img":"emoji:✅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit2 Learning English is fun!","l2zh":"Unit2 Learning English is fun!","l3en":"line","l3zh":"n.线；字行；路线","img":"emoji:📏"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"metre","l3zh":"n.米","img":"emoji:📏"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"camera","l3zh":"n.照相机；摄像机","img":"https://s.alicdn.com/@sc04/kf/Hca28a502fad6429bb38019bdc945f22fY.png_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"smell","l3zh":"v.嗅；闻","img":"emoji:👃"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"slim","l3zh":"adj.纤细的；苗条的","img":"emoji:🧍"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"neck","l3zh":"n.脖子；颈","img":"emoji:🦒"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"household","l3zh":"n.家庭；家务","img":"emoji:🏠"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"finger","l3zh":"n.手指","img":"emoji:👆"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"player","l3zh":"n.运动员；参赛选手","img":"emoji:⚽"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"homework","l3zh":"n.家庭作业","img":"emoji:📝"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"matter","l3zh":"n.事情；问题；物质","img":"emoji:❓"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"cough","l3zh":"v.&n.咳嗽","img":"emoji:🤧"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"headache","l3zh":"n.头痛","img":"emoji:🤕"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"fever","l3zh":"n.发烧；发热","img":"emoji:🤒"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"medicine","l3zh":"n.药；医学","img":"emoji:💊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"rest","l3zh":"n.&v.休息","img":"emoji:😴"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"average","l3zh":"adj.平均的；普通的","img":"emoji:📊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"height","l3zh":"n.身高；高度","img":"emoji:📏"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"different","l3zh":"adj.不同的","img":"emoji:🔄"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"hobby","l3zh":"n.业余爱好","img":"emoji:🎯"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"as","l3zh":"prep.像；如同；作为","img":"emoji:🔗"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"chess","l3zh":"n.国际象棋","img":"emoji:♟️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"creative","l3zh":"adj.有创造力的","img":"emoji:🎨"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"club","l3zh":"n.俱乐部；社团","img":"emoji:🏫"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"weekend","l3zh":"n.周末","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"match","l3zh":"n.比赛","img":"emoji:⚽"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"discuss","l3zh":"v.讨论；谈论","img":"emoji:💬"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"skill","l3zh":"n.技能；技巧","img":"emoji:🎯"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"life","l3zh":"n.生活；生命","img":"emoji:🌱"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"without","l3zh":"prep.没有","img":"emoji:🚫"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"just","l3zh":"adv.仅仅；只是","img":"emoji:⏳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit3 All about me","l2zh":"Unit3 All about me","l3en":"salt","l3zh":"n.盐","img":"emoji:🧂"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"secret","l3zh":"n.秘密；诀窍","img":"emoji:🤫"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"end","l3zh":"n.&v.结束；终止","img":"emoji:🏁"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"relative","l3zh":"n.亲戚；亲属","img":"emoji:👨👩👧"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"grandparent","l3zh":"n.祖父；祖母；外祖父；外祖母","img":"emoji:👴👵"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"grandma","l3zh":"n.奶奶；外婆","img":"emoji:👵"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"grandpa","l3zh":"n.爷爷；外公","img":"emoji:👴"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"parent","l3zh":"n.父；母","img":"emoji:👨‍👩‍👧"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"cousin","l3zh":"n.堂/表兄弟姐妹","img":"emoji:🧒"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"uncle","l3zh":"n.叔叔；舅舅；姑父","img":"emoji:👨"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"aunt","l3zh":"n.姑姑；阿姨；舅妈","img":"emoji:👩"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"husband","l3zh":"n.丈夫","img":"emoji:🤵"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"wife","l3zh":"n.妻子","img":"emoji:👰"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"marry","l3zh":"v.结婚","img":"emoji:💍"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"family","l3zh":"n.家庭；家人","img":"emoji:👨👩👧"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"photo","l3zh":"n.照片","img":"https://s.alicdn.com/@sc04/kf/H2586ef1f00ee4230851559be88978cb8i.png_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"picture","l3zh":"n.图画；照片","img":"emoji:🖼️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"birth","l3zh":"n.出生","img":"emoji:👶"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"birthday","l3zh":"n.生日","img":"emoji:🎂"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"born","l3zh":"adj.出生的","img":"emoji:👶"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"age","l3zh":"n.年龄","img":"emoji:🎂"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"person","l3zh":"n.人","img":"emoji:👤"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"look","l3zh":"v.看起来；看","img":"emoji:👀"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"look like","l3zh":"看起来像","img":"emoji:👀"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"kind","l3zh":"adj.和蔼的；善良的","img":"emoji:💗"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"strict","l3zh":"adj.严格的","img":"emoji:📏"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"funny","l3zh":"adj.滑稽的；有趣的","img":"emoji:😂"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"friendly","l3zh":"adj.友好的","img":"emoji:🤝"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"shy","l3zh":"adj.害羞的","img":"emoji:😳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"outgoing","l3zh":"adj.外向的","img":"emoji:😄"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"honest","l3zh":"adj.诚实的","img":"emoji:😇"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit4 My family","l2zh":"Unit4 My family","l3en":"patient","l3zh":"adj.有耐心的","img":"emoji:⏳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"pet","l3zh":"n.宠物","img":"emoji:🐾"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"animal","l3zh":"n.动物","img":"emoji:🐾"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"cat","l3zh":"n.猫","img":"emoji:🐱"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"dog","l3zh":"n.狗","img":"emoji:🐶"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"bird","l3zh":"n.鸟","img":"emoji:🐦"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"fish","l3zh":"n.鱼","img":"https://s.alicdn.com/@sc04/kf/Ab4494f37821040598309658d5c2a254fo.jpg_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"rabbit","l3zh":"n.兔子","img":"emoji:🐰"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"panda","l3zh":"n.熊猫","img":"emoji:🐼"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"tiger","l3zh":"n.老虎","img":"emoji:🐯"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"elephant","l3zh":"n.大象","img":"emoji:🐘"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"monkey","l3zh":"n.猴子","img":"emoji:🐵"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"bear","l3zh":"n.熊","img":"emoji:🐻"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"lion","l3zh":"n.狮子","img":"emoji:🦁"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"wolf","l3zh":"n.狼","img":"emoji:🐺"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"farm","l3zh":"n.农场","img":"emoji:🚜"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"pig","l3zh":"n.猪","img":"emoji:🐷"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"cow","l3zh":"n.奶牛","img":"emoji:🐮"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"sheep","l3zh":"n.绵羊","img":"emoji:🐑"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"duck","l3zh":"n.鸭子","img":"emoji:🦆"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"horse","l3zh":"n.马","img":"emoji:🐴"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"cute","l3zh":"adj.可爱的","img":"emoji:🥰"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"strong","l3zh":"adj.强壮的","img":"emoji:💪"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"weak","l3zh":"adj.弱小的","img":"emoji:🥀"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"run","l3zh":"v.跑","img":"emoji:🏃"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"jump","l3zh":"v.跳","img":"emoji:🤸"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"fly","l3zh":"v.飞","img":"emoji:🦅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"swim","l3zh":"v.游泳","img":"emoji:🏊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"feed","l3zh":"v.喂养","img":"emoji:🍽️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"keep","l3zh":"v.饲养；保持","img":"emoji:🔒"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"care","l3zh":"v.&n.照顾；关心","img":"emoji:💗"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"care for","l3zh":"照顾","img":"emoji:💗"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"danger","l3zh":"n.危险","img":"emoji:⚠️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"dangerous","l3zh":"adj.危险的","img":"emoji:⚠️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit5 Animal friends","l2zh":"Unit5 Animal friends","l3en":"safe","l3zh":"adj.安全的","img":"emoji:🛡️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"bookstore","l3zh":"n.书店","img":"emoji:📚"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"supermarket","l3zh":"n.超市","img":"emoji:🛒"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"zoo","l3zh":"n.动物园","img":"emoji:🦁"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"farm","l3zh":"n.农场","img":"emoji:🚜"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"museum","l3zh":"n.博物馆","img":"emoji:🏛️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"theatre","l3zh":"n.剧院；电影院","img":"emoji:🎭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"shop","l3zh":"n.商店；v.购物","img":"emoji:🛍️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"park","l3zh":"n.公园","img":"emoji:🌳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"hospital","l3zh":"n.医院","img":"emoji:🏥"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"bank","l3zh":"n.银行","img":"emoji:🏦"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"post office","l3zh":"n.邮局","img":"emoji:📮"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"street","l3zh":"n.街道","img":"emoji:🛣️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"near","l3zh":"prep.在……附近","img":"emoji:📍"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"far","l3zh":"adj.远的","img":"emoji:📏"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"next to","l3zh":"紧挨着","img":"emoji:📍"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"between","l3zh":"prep.在两者之间","img":"emoji:↔️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"in front of","l3zh":"在……前面","img":"emoji:📍"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"behind","l3zh":"prep.在……后面","img":"emoji:🙈"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"turn left","l3zh":"向左转","img":"emoji:↩️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"turn right","l3zh":"向右转","img":"emoji:↪️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"left","l3zh":"n.&adj.左边；左边的","img":"emoji:⬅️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"right","l3zh":"n.&adj.右边；右边的","img":"emoji:➡️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"way","l3zh":"n.路；方式","img":"emoji:🛣️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"direction","l3zh":"n.方向","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"ticket","l3zh":"n.票","img":"emoji:🎫"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"price","l3zh":"n.价格","img":"emoji:💰"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"map","l3zh":"n.地图","img":"https://s.alicdn.com/@sc04/kf/H49b728a1bf00441c80ffd92382b9ad2cD.png_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"camera","l3zh":"n.照相机","img":"https://s.alicdn.com/@sc04/kf/H1e2e44fb8b384020b083b0e39a2649bae.png_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"umbrella","l3zh":"n.雨伞","img":"https://s.alicdn.com/@sc04/kf/H8059a36e79ee4c89bf547c765a97d1fdK.jpg_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"sunglasses","l3zh":"n.太阳镜","img":"https://s.alicdn.com/@sc04/kf/Hfc56ecc5eb704b0fbe07ffb54515fb24h.jpg_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"trip","l3zh":"n.旅行","img":"emoji:🧳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"travel","l3zh":"v.&n.旅行","img":"emoji:🧳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"visit","l3zh":"v.参观；拜访","img":"emoji:🏛️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"place","l3zh":"n.地方","img":"emoji:📍"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit6 Let's go!","l2zh":"Unit6 Let's go!","l3en":"take a photo","l3zh":"拍照","img":"emoji:📸"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"day","l3zh":"n.天；日子","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"week","l3zh":"n.星期","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"Sunday","l3zh":"n.星期日","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"Monday","l3zh":"n.星期一","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"Tuesday","l3zh":"n.星期二","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"Wednesday","l3zh":"n.星期三","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"Thursday","l3zh":"n.星期四","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"Friday","l3zh":"n.星期五","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"Saturday","l3zh":"n.星期六","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"month","l3zh":"n.月份","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"January","l3zh":"n.一月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"February","l3zh":"n.二月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"March","l3zh":"n.三月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"April","l3zh":"n.四月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"May","l3zh":"n.五月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"June","l3zh":"n.六月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"July","l3zh":"n.七月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"August","l3zh":"n.八月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"September","l3zh":"n.九月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"October","l3zh":"n.十月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"November","l3zh":"n.十一月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"December","l3zh":"n.十二月","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"year","l3zh":"n.年","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"season","l3zh":"n.季节","img":"emoji:🍂"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"spring","l3zh":"n.春天","img":"emoji:🌸"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"summer","l3zh":"n.夏天","img":"emoji:☀️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"autumn","l3zh":"n.秋天","img":"emoji:🍂"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"winter","l3zh":"n.冬天","img":"emoji:❄️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"weather","l3zh":"n.天气","img":"emoji:🌤️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"sunny","l3zh":"adj.晴朗的","img":"emoji:☀️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"rainy","l3zh":"adj.下雨的","img":"emoji:🌧️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"windy","l3zh":"adj.刮风的","img":"emoji:💨"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"snowy","l3zh":"adj.下雪的","img":"emoji:❄️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"cloudy","l3zh":"adj.多云的","img":"emoji:☁️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"hot","l3zh":"adj.热的","img":"emoji:🔥"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"cold","l3zh":"adj.冷的","img":"emoji:🧊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"warm","l3zh":"adj.温暖的","img":"emoji:🌞"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"cool","l3zh":"adj.凉爽的","img":"emoji:😎"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"sun","l3zh":"n.太阳","img":"emoji:☀️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"rain","l3zh":"n.&v.雨；下雨","img":"emoji:🌧️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"snow","l3zh":"n.&v.雪；下雪","img":"emoji:❄️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"wind","l3zh":"n.风","img":"emoji:💨"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"cloud","l3zh":"n.云","img":"emoji:☁️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"festival","l3zh":"n.节日","img":"emoji:🎊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"holiday","l3zh":"n.假期","img":"emoji:🎉"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"birthday","l3zh":"n.生日","img":"emoji:🎂"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"date","l3zh":"n.日期","img":"emoji:📅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"time","l3zh":"n.时间","img":"emoji:⏰"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"o'clock","l3zh":"n.……点钟","img":"emoji:⏰"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"morning","l3zh":"n.早晨；上午","img":"emoji:🌅"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"afternoon","l3zh":"n.下午","img":"emoji:🌇"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"evening","l3zh":"n.晚上","img":"emoji:🌆"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit7 Days and months","l2zh":"Unit7 Days and months","l3en":"night","l3zh":"n.夜晚","img":"emoji:🌙"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"country","l3zh":"n.国家","img":"emoji:🏳️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"world","l3zh":"n.世界","img":"emoji:🌍"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"China","l3zh":"n.中国","img":"emoji:🇨🇳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"Chinese","l3zh":"n.&adj.中国人；汉语；中国的","img":"emoji:🇨🇳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"Canada","l3zh":"n.加拿大","img":"emoji:🇨🇦"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"Canadian","l3zh":"n.&adj.加拿大人；加拿大的","img":"emoji:🇨🇦"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"the U.S.","l3zh":"n.美国","img":"emoji:🇺🇸"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"American","l3zh":"n.&adj.美国人；美国的","img":"emoji:🇺🇸"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"the U.K.","l3zh":"n.英国","img":"emoji:🇬🇧"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"British","l3zh":"n.&adj.英国人；英国的","img":"emoji:🇬🇧"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"Australia","l3zh":"n.澳大利亚","img":"emoji:🇦🇺"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"Australian","l3zh":"n.&adj.澳大利亚人；澳大利亚的","img":"emoji:🇦🇺"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"Japan","l3zh":"n.日本","img":"emoji:🇯🇵"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"Japanese","l3zh":"n.&adj.日本人；日语；日本的","img":"emoji:🇯🇵"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"capital","l3zh":"n.首都","img":"emoji:🏛️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"language","l3zh":"n.语言","img":"emoji:🗣️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"culture","l3zh":"n.文化","img":"emoji:🏛️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"custom","l3zh":"n.习俗；风俗","img":"emoji:🎎"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"visitor","l3zh":"n.游客","img":"emoji:👀"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"tourist","l3zh":"n.旅行者","img":"emoji:🧳"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"map","l3zh":"n.地图","img":"https://s.alicdn.com/@sc04/kf/H49b728a1bf00441c80ffd92382b9ad2cD.png_640x640.jpg"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"east","l3zh":"n.&adj.东方；东方的","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"west","l3zh":"n.&adj.西方；西方的","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"south","l3zh":"n.&adj.南方；南方的","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"north","l3zh":"n.&adj.北方；北方的","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"southeast","l3zh":"n.&adj.东南；东南的","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"northeast","l3zh":"n.&adj.东北；东北的","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"southwest","l3zh":"n.&adj.西南；西南的","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"northwest","l3zh":"n.&adj.西北；西北的","img":"emoji:🧭"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"ocean","l3zh":"n.海洋","img":"emoji:🌊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"sea","l3zh":"n.大海","img":"emoji:🌊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"river","l3zh":"n.河流","img":"emoji:🌊"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"lake","l3zh":"n.湖泊","img":"emoji:🏞️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"mountain","l3zh":"n.山","img":"emoji:⛰️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"forest","l3zh":"n.森林","img":"emoji:🌲"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"island","l3zh":"n.岛屿","img":"emoji:🏝️"},{"l1en":"七年级上册","l1zh":"七年级上册","l2en":"Unit8 Countries around the world","l2zh":"Unit8 Countries around the world","l3en":"beach","l3zh":"n.海滩","img":"emoji:🏖️"}];
+</script>
+<script>
+(function(){
+"use strict";
+var ALL = window.CATALOG || [];
+var state = {
+  mode: "en2zh",      // en2zh | zh2en
+  order: "seq",       // seq | rand
+  cat: "all",         // 当前筛选的一级类目（zh 名）
+  idx: 0,
+  deck: [],           // 当前筛选后的记录索引（在 ALL 中的下标）
+  flipped: false,
+  autoOn: false,
+  autoTimer: null,
+  speaking: false
+};
+
+/* ---------- DOM ---------- */
+var $ = function(id){ return document.getElementById(id); };
+var elCard=$("card"), elScene=$("scene"), elFrontText=$("frontText"), elBackText=$("backText");
+var elFrontPath=$("frontPath"), elBackPath=$("backPath"), elTagsFront=$("tagsFront"), elTagsBack=$("tagsBack");
+var elCornerFront=$("cornerFront"), elFrontHint=$("frontHint"), elFrontPathLabel=$("frontPathLabel");
+var elFrontImgWrap=$("frontImgWrap"), elFrontImg=$("frontImg"), elFrontEmoji=$("frontEmoji"), elWatermark=$("watermark");
+var elPfill=$("pfill"), elPcur=$("pcur"), elPinfo=$("pinfo");
+var elChips=$("chips"), elModeBtn=$("modeBtn"), elOrderBtn=$("orderBtn"), elAutoBtn=$("autoBtn");
+var elSpeak=$("speakBtn"), elPrev=$("prevBtn"), elNext=$("nextBtn"), elLang=$("langBtn");
+var elToast=$("toast");
+
+/* ---------- 语音 ---------- */
+var voices=[];
+var SPEAK_GAP = 1000;   // 单词间隔 1 秒
+var speakGen = 0;       // 朗读代次，用于中断旧朗读链
+function loadVoices(){
+  voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+}
+if ("speechSynthesis" in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+function pickVoice(lang){
+  var exact = lang.toLowerCase();
+  var preferred = {
+    "en-gb": ["daniel", "kate", "arthur", "serena", "oliver", "moira", "libby", "sonia", "thomas", "google uk english"],
+    "en-us": ["google us english", "samantha", "alex", "ava", "allison"],
+    "zh-cn": ["ting-ting", "xiaoxiao", "huihui", "meijia", "yaoyao", "google 普通话"]
+  };
+  var list = preferred[exact] || [];
+  for (var i=0;i<list.length;i++){
+    for (var j=0;j<voices.length;j++){
+      if (voices[j].name && voices[j].name.toLowerCase().indexOf(list[i])!==-1) return voices[j];
+    }
+  }
+  for (var j=0;j<voices.length;j++){
+    if (voices[j].lang && voices[j].lang.toLowerCase().indexOf(exact)===0) return voices[j];
+  }
+  var p = lang.split("-")[0];
+  for (var j=0;j<voices.length;j++){
+    if (voices[j].lang && voices[j].lang.toLowerCase().indexOf(p)===0) return voices[j];
+  }
+  return null;
+}
+function stopSpeaking(){
+  speakGen++;
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  if (audioBusy){
+    audioBusy = false;
+    audioEl.pause();
+    audioEl.onended = audioEl.onerror = audioEl.oncanplay = null;
+    audioEl.removeAttribute("src");
+  }
+  elSpeak.classList.remove("speaking");
+}
+/* 整句朗读（中文等） */
+function speakText(text, lang, onDone){
+  if (!("speechSynthesis" in window)){ toast("此浏览器不支持朗读，请点右上角···在浏览器中打开"); if (onDone) onDone(); return; }
+  var gen = ++speakGen;
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = 0.92;
+  u.pitch = 1;
+  var v = pickVoice(lang);
+  if (v) u.voice = v;
+  u.onstart = function(){ elSpeak.classList.add("speaking"); };
+  u.onend = u.onerror = function(){
+    if (gen !== speakGen) return;
+    elSpeak.classList.remove("speaking");
+    if (onDone) onDone();
+  };
+  setTimeout(function(){
+    if (gen !== speakGen) return;
+    if ("speechSynthesis" in window) speechSynthesis.resume();
+    speechSynthesis.speak(u);
+  }, 120);
+}
+/* 逐词朗读：跳过 &，词间间隔 SPEAK_GAP 毫秒 */
+/* 朗读分组：按 & 拆分，组内连读（词组），组间间隔 SPEAK_GAP */
+function speakByGroups(groups, lang, onDone){
+  if (!groups.length){ if (onDone) onDone(); return; }
+  if (!("speechSynthesis" in window)){ toast("此浏览器不支持朗读，请点右上角···在浏览器中打开"); if (onDone) onDone(); return; }
+  var gen = ++speakGen;
+  speechSynthesis.cancel();
+  var i = 0;
+  function begin(){
+    if (gen !== speakGen) return;
+    elSpeak.classList.add("speaking");
+    if ("speechSynthesis" in window) speechSynthesis.resume();
+    next();
+  }
+  function next(){
+    if (gen !== speakGen) return;
+    if (i >= groups.length){
+      elSpeak.classList.remove("speaking");
+      if (onDone) onDone();
+      return;
+    }
+    var g = groups[i++];
+    var u = new SpeechSynthesisUtterance(g);
+    u.lang = lang;
+    u.rate = 0.9;
+    u.pitch = 1;
+    var v = pickVoice(lang);
+    if (v){
+      u.voice = v;
+      if (lang.indexOf("en")===0 && !window.__voiceNotified){
+        window.__voiceNotified = true;
+        toast("英式发音："+v.name);
+      }
+    }
+    u.onend = u.onerror = function(){
+      if (gen !== speakGen) return;
+      if (i < groups.length){
+        setTimeout(next, SPEAK_GAP);
+      } else {
+        next();
+      }
+    };
+    speechSynthesis.speak(u);
+  }
+  setTimeout(begin, 120);
+}
+function splitGroups(en){
+  return String(en).split("&").map(function(g){
+    return g.replace(/\s+/g, " ").trim();
+  }).filter(function(g){ return g.length > 0; });
+}
+var audioEl = new Audio();
+var audioBusy = false;
+function pad5(n){ return ("00000"+n).slice(-5); }
+function playAudio(url, onOk, onFail){
+  audioBusy = true;
+  elSpeak.classList.add("speaking");
+  var finished = false;
+  function done(ok){
+    if (finished) return;
+    finished = true;
+    audioBusy = false;
+    elSpeak.classList.remove("speaking");
+    audioEl.onended = audioEl.onerror = audioEl.oncanplay = null;
+    audioEl.removeAttribute("src");
+    if (ok && onOk) onOk();
+    else if (!ok && onFail) onFail();
+  }
+  audioEl.onended = function(){ done(true); };
+  audioEl.onerror = function(){ done(false); };
+  audioEl.oncanplay = function(){
+    audioEl.play().catch(function(){ done(false); });
+  };
+  audioEl.src = url;
+  setTimeout(function(){
+    if (!finished && audioEl.readyState < 3){ done(false); }
+  }, 4000);
+}
+function speakCurrent(onDone){
+  var r = ALL[state.deck[state.idx]];
+  if (!r) return;
+  var idx = state.deck[state.idx];
+  var isEn;
+  if (state.flipped){
+    isEn = state.mode !== "en2zh";
+  } else {
+    isEn = state.mode === "en2zh";
+  }
+  if (!isEn){
+    if (state.flipped){ speakText(r.l1zh+"，"+r.l2zh+"，"+r.l3zh, "zh-CN", onDone); }
+    else { speakText(r.l3zh, "zh-CN", onDone); }
+    return;
+  }
+  /* 英文：优先播放预生成音频（微信内也可发声），失败回退 TTS */
+  stopSpeaking();
+  var url = "audio/" + pad5(idx) + ".m4a";
+  playAudio(url, function(){ if (onDone) onDone(); }, function(){
+    if (state.flipped){ speakByGroups(splitGroups(r.l1en+" "+r.l2en+" "+r.l3en), "en-GB", onDone); }
+    else { speakByGroups(splitGroups(r.l3en), "en-GB", onDone); }
+  });
+}
+
+/* ---------- 筛选 chips ---------- */
+function buildChips(){
+  var cats = [];
+  var seen = {};
+  for (var i=0;i<ALL.length;i++){
+    var k = ALL[i].l2zh;
+    if (!seen[k]){ seen[k]=true; cats.push({zh:k, en:ALL[i].l2en, n:1}); }
+    else { for (var j=0;j<cats.length;j++) if (cats[j].zh===k) cats[j].n++; }
+  }
+  var html = '<div class="chip on" data-cat="all">全部 <b>'+ALL.length+'</b></div>';
+  for (var c=0;c<cats.length;c++){
+    html += '<div class="chip" data-cat="'+cats[c].zh+'">'+cats[c].zh+' <b>'+cats[c].n+'</b></div>';
+  }
+  elChips.innerHTML = html;
+  elChips.addEventListener("click", function(e){
+    var chip = e.target.closest(".chip");
+    if (!chip) return;
+    var cat = chip.getAttribute("data-cat");
+    if (cat === state.cat) return;
+    state.cat = cat;
+    var all = elChips.querySelectorAll(".chip");
+    for (var i=0;i<all.length;i++) all[i].classList.remove("on");
+    chip.classList.add("on");
+    buildDeck();
+  });
+}
+
+/* ---------- deck ---------- */
+function buildDeck(){
+  stopSpeaking();
+  state.deck = [];
+  for (var i=0;i<ALL.length;i++){
+    if (state.cat==="all" || ALL[i].l2zh===state.cat) state.deck.push(i);
+  }
+  if (state.order==="rand") shuffle(state.deck);
+  state.idx = 0;
+  state.flipped = false;
+  elCard.classList.remove("flip");
+  render();
+}
+function shuffle(a){
+  for (var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t=a[i]; a[i]=a[j]; a[j]=t;
+  }
+}
+function nextIdx(){
+  if (state.order==="rand") return Math.floor(Math.random()*state.deck.length);
+  return (state.idx+1)%state.deck.length;
+}
+
+/* ---------- render ---------- */
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function render(){
+  if (!state.deck.length){ toast("当前分类无数据"); return; }
+  var r = ALL[state.deck[state.idx]];
+  var en2zh = state.mode==="en2zh";
+
+  elFrontText.textContent = en2zh ? r.l3en : r.l3zh;
+  elBackText.textContent  = en2zh ? r.l3zh : r.l3en;
+  elFrontPath.innerHTML = en2zh
+    ? esc(r.l1en)+'<span class="arrow">›</span>'+esc(r.l2en)
+    : esc(r.l1zh)+'<span class="arrow">›</span>'+esc(r.l2zh);
+  elBackPath.innerHTML = en2zh
+    ? esc(r.l1zh)+'<span class="arrow">›</span>'+esc(r.l2zh)+'<span class="arrow">›</span>'+esc(r.l3zh)
+    : esc(r.l1en)+'<span class="arrow">›</span>'+esc(r.l2en)+'<span class="arrow">›</span>'+esc(r.l3en);
+
+  elTagsFront.innerHTML = en2zh
+    ? '<span class="tag">'+esc(r.l1en)+'</span><span class="tag">'+esc(r.l2en)+'</span>'
+    : '<span class="tag">'+esc(r.l1zh)+'</span><span class="tag">'+esc(r.l2zh)+'</span>';
+  elTagsBack.innerHTML  = '<span class="tag acc">'+esc(r.l3en)+'</span>';
+  elCornerFront.textContent = en2zh ? "英 → 中" : "中 → 英";
+  updateLangBtn();
+  if (r.img){
+    elFrontImgWrap.classList.remove("hide");
+    if (r.img.indexOf("emoji:") === 0){
+      elFrontImg.classList.add("hide");
+      elFrontImg.removeAttribute("src");
+      elFrontEmoji.classList.remove("hide");
+      elFrontEmoji.textContent = r.img.slice(6);
+    } else {
+      elFrontImg.classList.remove("hide");
+      elFrontEmoji.classList.add("hide");
+      elFrontEmoji.textContent = "";
+      elFrontImg.src = r.img;
+    }
+  } else {
+    elFrontImgWrap.classList.add("hide");
+    elFrontImg.removeAttribute("src");
+    elFrontEmoji.classList.add("hide");
+  }
+  if (r.img){
+    elWatermark.classList.remove("hide");
+  } else {
+    elWatermark.classList.add("hide");
+  }
+  elFrontHint.textContent = en2zh ? "Tap to flip · 🔊 word by word" : "点击卡片查看英文 · 点 🔊 逐词跟读";
+  elFrontPathLabel.textContent = en2zh ? "PATH" : "所属路径";
+
+  var n = state.deck.length;
+  var pct = n ? Math.round((state.idx+1)/n*100) : 0;
+  elPfill.style.width = pct+"%";
+  elPcur.textContent = (state.idx+1)+" / "+n;
+  elPinfo.textContent = state.cat==="all" ? "全部" : state.cat;
+}
+function flipCard(){
+  state.flipped = !state.flipped;
+  elCard.classList.toggle("flip", state.flipped);
+  if (state.autoOn){ scheduleAuto(); }
+}
+
+/* ---------- 自动播放（朗读驱动） ---------- */
+function stopAuto(){
+  state.autoOn = false;
+  elAutoBtn.textContent = "▶";
+  elAutoBtn.classList.remove("on");
+  if (state.autoTimer){ clearTimeout(state.autoTimer); state.autoTimer=null; }
+  stopSpeaking();
+}
+function scheduleAuto(){
+  if (!state.autoOn) return;
+  if (state.autoTimer) clearTimeout(state.autoTimer);
+  if (state.flipped){
+    // 背面阶段：朗读答案，2.6s 后下一张
+    speakCurrent(function(){});
+    state.autoTimer = setTimeout(function(){
+      elCard.classList.remove("flip");
+      state.flipped = false;
+      state.idx = nextIdx();
+      render();
+      scheduleAuto();
+    }, 2600);
+  } else {
+    // 正面阶段：逐词朗读英文（3s 间隔），完成后 1.2s 翻面
+    speakCurrent(function(){
+      if (!state.autoOn) return;
+      state.autoTimer = setTimeout(function(){
+        elCard.classList.add("flip");
+        state.flipped = true;
+        scheduleAuto();
+      }, 1200);
+    });
+  }
+}
+function toggleAuto(){
+  state.autoOn = !state.autoOn;
+  if (state.autoOn){
+    elAutoBtn.textContent = "⏸";
+    elAutoBtn.classList.add("on");
+    if (state.flipped){ elCard.classList.remove("flip"); state.flipped=false; }
+    scheduleAuto();
+    toast("自动播放中：自动翻面并朗读");
+  } else {
+    stopAuto();
+  }
+}
+
+/* ---------- 事件 ---------- */
+elCard.addEventListener("click", function(e){
+  if (e.target === elSpeak || elSpeak.contains(e.target)) return;
+  stopSpeaking();
+  flipCard();
+});
+elSpeak.addEventListener("click", function(e){
+  e.stopPropagation();
+  if (state.autoOn) return;
+  speakCurrent();
+});
+elNext.addEventListener("click", function(){
+  stopSpeaking();
+  state.idx = nextIdx();
+  state.flipped = false;
+  elCard.classList.remove("flip");
+  render();
+  if (state.autoOn) scheduleAuto();
+});
+elPrev.addEventListener("click", function(){
+  stopSpeaking();
+  state.idx = (state.idx-1+state.deck.length)%state.deck.length;
+  state.flipped = false;
+  elCard.classList.remove("flip");
+  render();
+  if (state.autoOn) scheduleAuto();
+});
+elLang.addEventListener("click", function(){
+  stopSpeaking();
+  state.mode = state.mode === "en2zh" ? "zh2en" : "en2zh";
+  elModeBtn.textContent = state.mode === "en2zh" ? "EN → 中" : "中 → EN";
+  if (state.flipped){ elCard.classList.remove("flip"); state.flipped = false; }
+  render();
+});
+function updateLangBtn(){
+  elLang.title = state.mode === "en2zh" ? "切换为中文+图片（当前英文）" : "切换为英文+图片（当前中文）";
+}
+elModeBtn.addEventListener("click", function(){
+  stopSpeaking();
+  state.mode = state.mode==="en2zh" ? "zh2en" : "en2zh";
+  elModeBtn.textContent = state.mode==="en2zh" ? "EN → 中" : "中 → EN";
+  if (state.flipped){ elCard.classList.remove("flip"); state.flipped=false; }
+  render();
+});
+elFrontImg.addEventListener("error", function(){ elFrontImgWrap.classList.add("hide"); });
+elFrontImg.addEventListener("load", function(){ elFrontImgWrap.classList.remove("hide"); });
+elOrderBtn.addEventListener("click", function(){
+  stopSpeaking();
+  state.order = state.order==="seq" ? "rand" : "seq";
+  elOrderBtn.textContent = state.order==="seq" ? "顺序" : "随机";
+  buildDeck();
+});
+elAutoBtn.addEventListener("click", toggleAuto);
+
+var elTtsBanner=$("ttsBanner"), elTtsClose=$("ttsClose");
+function checkTTS(){
+  if (!("speechSynthesis" in window)){
+    elTtsBanner.classList.remove("hide");
+  }
+}
+elTtsClose.addEventListener("click", function(){ elTtsBanner.classList.add("hide"); });
+
+document.addEventListener("visibilitychange", function(){
+  if (document.hidden) stopSpeaking();
+});
+
+/* 键盘支持（桌面） */
+document.addEventListener("keydown", function(e){
+  if (e.key==="ArrowRight" || e.key===" ") elNext.click();
+  else if (e.key==="ArrowLeft") elPrev.click();
+  else if (e.key==="Enter") flipCard();
+});
+
+/* ---------- toast ---------- */
+var toastTimer=null;
+function toast(msg){
+  elToast.textContent = msg;
+  elToast.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ elToast.classList.remove("show"); }, 2200);
+}
+
+/* ---------- 启动 ---------- */
+buildChips();
+buildDeck();
+checkTTS();
+})();
+</script>
+</body>
+</html>
