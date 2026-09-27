@@ -431,16 +431,16 @@ function speakCurrent(onDone){
     isEn = state.mode === "en2zh";
   }
   if (!isEn){
-    if (state.flipped){ speakText(r.l1zh+"，"+r.l2zh+"，"+r.l3zh, "zh-CN", onDone); }
-    else { speakText(r.l3zh, "zh-CN", onDone); }
+    /* 只读汉译 l3zh，不读所属路径 l1zh / l2zh */
+    speakText(r.l3zh, "zh-CN", onDone);
     return;
   }
   /* 英文：优先播放预生成音频（微信内也可发声），失败回退 TTS */
   stopSpeaking();
   var url = "audio/" + pad5(idx) + ".m4a";
   playAudio(url, function(){ if (onDone) onDone(); }, function(){
-    if (state.flipped){ speakByGroups(splitGroups(r.l1en+" "+r.l2en+" "+r.l3en), "en-GB", onDone); }
-    else { speakByGroups(splitGroups(r.l3en), "en-GB", onDone); }
+    /* 预生成音频不可用时回退 TTS：同样只读条目本身，不读所属路径 l1en / l2en */
+    speakByGroups(splitGroups(r.l3en), "en-GB", onDone);
   });
 }
 
